@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Happy Birthday</title>
 
 <style>
@@ -19,11 +20,10 @@
         font-weight: bold;
         margin-top: 20px;
         color: #ff00ff;
-        text-shadow:
-            0 0 5px #ff00ff,
-            0 0 10px #ff00ff,
-            0 0 20px #ff00ff,
-            0 0 40px #ff00ff;
+        text-shadow: 0 0 5px #ff00ff,
+                     0 0 10px #ff00ff,
+                     0 0 20px #ff00ff,
+                     0 0 40px #ff00ff;
         animation: blink 1.3s infinite;
     }
     @keyframes blink {
@@ -31,9 +31,7 @@
         50% { opacity: 0.4; }
     }
 
-    .container {
-        margin-top: 30px;
-    }
+    .container { margin-top: 30px; }
 
     video {
         width: 80%;
@@ -54,39 +52,50 @@
         font-size: 18px;
         transition: 0.2s;
     }
-    .btn:hover {
-        background: #ff44ff;
-    }
+    .btn:hover { background: #ff44ff; }
 
-    /* Màu neon cho bài thơ */
+    /* ⭐ Màu chữ bài thơ */
     .poemColor {
         color: #7dffff;
         text-shadow: 0 0 8px #7dffff, 0 0 18px #4dffff;
     }
 
-    /* OVERLAY xoay ngang */
-    #rotateNotice {
+    /* ⭐ THÔNG BÁO XOAY ĐIỆN THOẠI */
+    #rotateWarning {
         position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: #000;
-        color: #00eaff;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.92);
+        z-index: 9999;
         display: none;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
+        flex-direction: column;
         text-align: center;
         padding: 20px;
+    }
+    #rotateWarning img {
+        width: 130px;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 0 10px #00eaff);
+    }
+    #rotateWarning p {
         font-size: 28px;
         font-weight: bold;
-        z-index: 999999;
-        text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff;
+        color: #7dffff;
+        text-shadow: 0 0 10px #00eaff;
     }
 </style>
 </head>
 <body>
 
-<!-- OVERLAY yêu cầu xoay ngang -->
-<div id="rotateNotice">📱 Vui lòng xoay ngang màn hình để xem đầy đủ 🎉</div>
+<!-- ⭐ CẢNH BÁO XOAY MÀN HÌNH -->
+<div id="rotateWarning">
+    <img src="https://i.imgur.com/xYI5o9h.png">
+    <p>Vui lòng xoay ngang để xem đẹp nhất 💙</p>
+</div>
 
 <!-- TEXT LEFT & RIGHT TYPEWRITER -->
 <div id="typeLeft"
@@ -120,7 +129,6 @@
     <button class="btn" onclick="toggleMusic('audio2')">▶ Phát nhạc 2</button>
 </div>
 
-
 <script>
 // Auto play video
 document.getElementById("videoPlayer").play();
@@ -128,11 +136,8 @@ document.getElementById("videoPlayer").play();
 // Toggle nhạc
 function toggleMusic(id){
     const audio = document.getElementById(id);
-    if(audio.paused){
-        audio.play();
-    } else {
-        audio.pause();
-    }
+    if(audio.paused) audio.play();
+    else audio.pause();
 }
 </script>
 
@@ -181,7 +186,6 @@ size();
 window.onresize = size;
 
 let pieces = [];
-
 function rand(a,b){ return Math.random()*(b-a)+a; }
 
 function spawn(){
@@ -209,10 +213,8 @@ function loop(){
         ctx.save();
         ctx.translate(p.x,p.y);
         ctx.rotate(p.r * Math.PI/180);
-
         ctx.fillStyle = `hsl(${(p.x+p.y)%360} 80% 60%)`;
         ctx.fillRect(-p.s/2, -p.s/2, p.s, p.s*0.6);
-
         ctx.restore();
     });
 
@@ -221,25 +223,25 @@ function loop(){
 
     requestAnimationFrame(loop);
 }
-
-spawn();
-loop();
+spawn(); loop();
 </script>
 
 <script>
-// CHECK XOAY MÀN HÌNH
-function checkOrientation() {
-    const notice = document.getElementById("rotateNotice");
+// ⭐ AUTO DETECT XOAY NGANG CHO ĐIỆN THOẠI
+function checkOrientation(){
+    const warn = document.getElementById("rotateWarning");
 
-    if (window.innerHeight > window.innerWidth) {
-        notice.style.display = "flex";
+    if(window.innerHeight > window.innerWidth){
+        // Đang XOAY DỌC → chặn màn hình
+        warn.style.display = "flex";
     } else {
-        notice.style.display = "none";
+        // XOAY NGANG → cho xem
+        warn.style.display = "none";
     }
 }
 
-checkOrientation();
 window.addEventListener("resize", checkOrientation);
+window.addEventListener("load", checkOrientation);
 </script>
 
 </body>
