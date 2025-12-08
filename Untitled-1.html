@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday</title>
+
+<style>
+    body {
+        background: #111;
+        color: #fff;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        overflow-x: hidden;
+    }
+
+    /* Banner neon */
+    .neon {
+        font-size: 55px;
+        font-weight: bold;
+        margin-top: 20px;
+        color: #ff00ff;
+        text-shadow:
+            0 0 5px #ff00ff,
+            0 0 10px #ff00ff,
+            0 0 20px #ff00ff,
+            0 0 40px #ff00ff;
+        animation: blink 1.3s infinite;
+    }
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+
+    .container {
+        margin-top: 30px;
+    }
+
+    video {
+        width: 80%;
+        max-width: 700px;
+        border-radius: 15px;
+        border: 3px solid #ff00ff;
+        margin-top: 15px;
+    }
+
+    .btn {
+        margin: 12px;
+        padding: 12px 22px;
+        background: #ff00ff;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        cursor: pointer;
+        font-size: 18px;
+        transition: 0.2s;
+    }
+    .btn:hover {
+        background: #ff44ff;
+    }
+
+    /* Màu neon cho bài thơ */
+    .poemColor {
+        color: #7dffff;
+        text-shadow: 0 0 8px #7dffff, 0 0 18px #4dffff;
+    }
+
+    /* OVERLAY xoay ngang */
+    #rotateNotice {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: #000;
+        color: #00eaff;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+        font-size: 28px;
+        font-weight: bold;
+        z-index: 999999;
+        text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff;
+    }
+</style>
+</head>
+<body>
+
+<!-- OVERLAY yêu cầu xoay ngang -->
+<div id="rotateNotice">📱 Vui lòng xoay ngang màn hình để xem đầy đủ 🎉</div>
+
+<!-- TEXT LEFT & RIGHT TYPEWRITER -->
+<div id="typeLeft"
+     class="poemColor"
+     style="position:fixed;left:20px;top:50%;width:260px;transform:translateY(-50%);text-align:left;font-size:20px;line-height:1.4;font-weight:bold;">
+</div>
+
+<div id="typeRight"
+     class="poemColor"
+     style="position:fixed;right:20px;top:50%;width:260px;transform:translateY(-50%);text-align:right;font-size:20px;line-height:1.4;font-weight:bold;">
+</div>
+
+<!-- CONFETTI -->
+<canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;"></canvas>
+
+<div class="neon">🎉 HAPPY 0.0 BIRTHDAY 🎉</div>
+
+<!-- VIDEO -->
+<div class="container">
+    <video id="videoPlayer" controls autoplay>
+        <source src="video.mp4" type="video/mp4">
+    </video>
+</div>
+
+<!-- MUSIC -->
+<div class="container">
+    <audio id="audio1" src="nhac1.mp3"></audio>
+    <audio id="audio2" src="nhac2.mp3"></audio>
+
+    <button class="btn" onclick="toggleMusic('audio1')">▶ Phát nhạc 1</button>
+    <button class="btn" onclick="toggleMusic('audio2')">▶ Phát nhạc 2</button>
+</div>
+
+
+<script>
+// Auto play video
+document.getElementById("videoPlayer").play();
+
+// Toggle nhạc
+function toggleMusic(id){
+    const audio = document.getElementById(id);
+    if(audio.paused){
+        audio.play();
+    } else {
+        audio.pause();
+    }
+}
+</script>
+
+<script>
+// TYPEWRITER
+const textLeft = `Chúc Linh sinh nhật tưng bừng,
+Dù vẫn lôn lình đúng chất Linh từng ngày qua.
+Đi thì luôi bình thật thà,
+Nhưng miệng lo chính nghe là muốn quạo liền.`;
+
+const textRight = `Tính Linh pha chút lân đình duyên,
+Làm ai cũng phải cười điên mỗi lần gặp.
+Sinh nhật vui vẻ Linh nhé,
+Giữ cái nết đó… cho đời bớt nhạt nha.`;
+
+function typeWriter(el, text, speed=40){
+    let i = 0;
+    function type(){
+        if(i < text.length){
+            el.innerHTML += text.charAt(i).replace(/\n/g, "<br>");
+            i++;
+            setTimeout(type, speed);
+        }
+    }
+    type();
+}
+
+window.onload = () => {
+    typeWriter(document.getElementById("typeLeft"), textLeft, 35);
+    setTimeout(() => {
+        typeWriter(document.getElementById("typeRight"), textRight, 35);
+    }, 1200);
+};
+</script>
+
+<script>
+// CONFETTI
+const c = document.getElementById("confettiCanvas");
+const ctx = c.getContext("2d");
+
+function size(){
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+}
+size();
+window.onresize = size;
+
+let pieces = [];
+
+function rand(a,b){ return Math.random()*(b-a)+a; }
+
+function spawn(){
+    for(let i=0;i<120;i++){
+        pieces.push({
+            x: rand(0,c.width),
+            y: rand(-c.height,0),
+            vx: rand(-1,1),
+            vy: rand(2,6),
+            s: rand(5,10),
+            r: rand(0,360),
+            vr: rand(-5,5)
+        });
+    }
+}
+
+function loop(){
+    ctx.clearRect(0,0,c.width,c.height);
+
+    pieces.forEach(p=>{
+        p.x += p.vx;
+        p.y += p.vy;
+        p.r += p.vr;
+
+        ctx.save();
+        ctx.translate(p.x,p.y);
+        ctx.rotate(p.r * Math.PI/180);
+
+        ctx.fillStyle = `hsl(${(p.x+p.y)%360} 80% 60%)`;
+        ctx.fillRect(-p.s/2, -p.s/2, p.s, p.s*0.6);
+
+        ctx.restore();
+    });
+
+    pieces = pieces.filter(p=>p.y < c.height + 50);
+    if(pieces.length < 80) spawn();
+
+    requestAnimationFrame(loop);
+}
+
+spawn();
+loop();
+</script>
+
+<script>
+// CHECK XOAY MÀN HÌNH
+function checkOrientation() {
+    const notice = document.getElementById("rotateNotice");
+
+    if (window.innerHeight > window.innerWidth) {
+        notice.style.display = "flex";
+    } else {
+        notice.style.display = "none";
+    }
+}
+
+checkOrientation();
+window.addEventListener("resize", checkOrientation);
+</script>
+
+</body>
+</html>
